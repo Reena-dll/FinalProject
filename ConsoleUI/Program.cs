@@ -10,6 +10,30 @@ namespace ConsoleUI
     {
         static void Main(string[] args)
         {
+            //ProductTest();
+            //CategoryTest();
+            ProductManager productManager = new ProductManager(new EfProductDal());
+            foreach (var item in productManager.GetProductDetails())
+            {
+                Console.WriteLine("{0} => {1} => {2} => {3}"
+                    ,item.ProductId,item.ProductName,
+                    item.CategoryName,item.UnitsInStock);
+            }
+
+            Console.ReadLine();
+        }
+
+        private static void CategoryTest()
+        {
+            CategoryManager categoryManager = new CategoryManager(new EfCategoryDal());
+            foreach (Category category in categoryManager.GetAll())
+            {
+                Console.WriteLine(category.CategoryName);
+            }
+        }
+
+        private static void ProductTest()
+        {
             ProductManager productManager = new ProductManager(new EfProductDal());
 
             foreach (var item in productManager.GetAll())
@@ -24,13 +48,10 @@ namespace ConsoleUI
             }
 
             Console.WriteLine("Fiyat Aralığına Göre Getir****************");
-            foreach (Product product in productManager.GetByUnitPrice(1,10))
+            foreach (Product product in productManager.GetByUnitPrice(1, 10))
             {
                 Console.WriteLine(product.ProductName);
             }
-
-
-            Console.ReadLine();
         }
     }
 }

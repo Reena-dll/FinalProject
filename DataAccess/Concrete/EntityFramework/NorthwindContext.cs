@@ -9,6 +9,7 @@ namespace DataAccess.Concrete.EntityFramework
     // Context nesnesi DB tabloları ile proje classlarını bağlamak
     public class NorthwindContext : DbContext
     {
+
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             optionsBuilder.UseSqlServer(@"Server=(localdb)\MSSQLLocalDB;Database=Northwind;Trusted_Connection=true");
@@ -17,6 +18,8 @@ namespace DataAccess.Concrete.EntityFramework
         public DbSet<Product> Products { get; set; }
         public DbSet<Category> Categories { get; set; }
         public DbSet<Customer> Customers { get; set; }
+        public DbSet<Order> Orders { get; set; }
+
 
     }
 }
