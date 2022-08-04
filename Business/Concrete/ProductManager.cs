@@ -1,4 +1,5 @@
 ﻿using Business.Abstract;
+using Business.BusinessAspects.Autofac;
 using Business.CCS;
 using Business.Constants;
 using Business.ValidationRules.FluentValidation;
@@ -29,12 +30,40 @@ namespace Business.Concrete
             _categoryService = categoryService;
         }
 
+        // Secured Operation = Aspect İsmi
+        // Claim = Kullanıcının product.add veya admin yetkilerinden birine sahip olması gerekir.
+        // product.add ve admin = claim
+        // Client = Bir web uygulaması, bir mobil uygulaması her hangi birisi olabilir,
+        // Web üzerinden konuşacak olursak bizim her bir tarayacımız client'dır.
+        // Jason Web Token (JWT) = Api tarafınnda yollanan JWT'i Client kendi hafızasında tutar. 
+        // JWT almış bir client bundan sonra ki isteklerini yaparken istek ile birlikte JWT kodunu da gönderecek.
+        // Authorization da bir cross cutting concerns'dır.
+        // Kişinin yetkisi var mı, yetkiyi kontrol ederiz.
+        // Encryption, Hashing = Bunlar bir datayı karşı taraf okuyamaması için yapılan çalışmalardır.
+        // Parolaları biz veri tabanında Hashleriz. 
+        // Şifresi 123456 olan bir kullanıcının şifresini biz veri tabanında açık tutmayız. 
+        // O veri kaynağına eğer birisi ulaşır ise şifrelere erişmiş olur.
+        // Genellikle parolaları hashlediğimiz zaman bir şifreleme algoritması ile (MD5,SHA1 gibi) geri dönüşü olmayacak şekilde hashlenirler.
+        // Biz bu parolayı bellekte veya veritabanında 123456 değil, Hashleme algoritmamıza göre onun oluşturduğu şifreyi göndeririz.
+        // Kişinin girdiği şifreye ekstra bizim de bir şeyler kattığımız olaya Salting ( Tuzlama ) denir.
+        // Kullanıcının girdiği parolayı biz biraz daha güçlendiriyoruz.
+        // Kullanıcının girdiği şifre basit bir şifre ise saldırganlar rainbow table adı verilen tablo oluşturuyorlar,
+        // Olabilecek olan bütün şifreleri tabloya yerleştirip hash'lerini çıkartıyor.
+        // Daha sonrasında bizim kaynağımızdan ele geçirdiği hash'ler ile karşılaştırıp şifreyi çözmeye çalışıyor.
+        // Parolamızın gücü ne kadar az ise o kadar kolay bulabilirler.
+        // Bu yüzden şifrelerimizde Özel karakter, büyük küçük harf, sayı kullanmalıyız. 
+        // Ama bütün kullanıcılar bu kurallara uymuyor, bizde bu yüzden salting uyguluyoruz.
+        //Encryption ise geri dönüşü olan bir veridir.
+        
+        [SecuredOperation("product.add,admin")]
         [ValidationAspect(typeof(ProductValidator))]
+        // İş kuralları AOP
         public IResult Add(Product product)
         {
             // business codes
             // validation
 
+            // İş motoru. Yazdığımız kuralları motora koyuyoruz. 
             IResult result =  BusinessRules.Run(CheckIfProductNameExists(product.ProductName),
                 CheckIfProductCountOfCategoryCorrect(product.CategoryId),
                 CheckIfCategoryLimitExceded());
