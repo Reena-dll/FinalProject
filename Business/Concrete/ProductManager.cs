@@ -57,7 +57,7 @@ namespace Business.Concrete
         // Ama bütün kullanıcılar bu kurallara uymuyor, bizde bu yüzden salting uyguluyoruz.
         //Encryption ise geri dönüşü olan bir veridir.
         
-        [SecuredOperation("product.add,admin")]
+        [SecuredOperation("admin")]
         [ValidationAspect(typeof(ProductValidator))]
         [CacheRemoveAspect("IProductService.Get")]
         // İş kuralları AOP
